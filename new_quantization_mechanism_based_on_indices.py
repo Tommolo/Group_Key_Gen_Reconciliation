@@ -1,6 +1,7 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+from pybloom_live import BloomFilter
 
 def calculate_rssi(P_tx_dBm, distance_m, frequency_Hz, fading_dB, noise_std_dB):
     # Velocità della luce in m/s
@@ -29,7 +30,7 @@ frequency_Hz = 2.4 * 10**9  # Frequenza in Hz (2.4 GHz)
 noise_std_dB = 2     # Deviazione standard del rumore gaussiano in dB
 
 # Generare un set di x valori di fading per entrambi i nodi
-num_signals= 10
+num_signals= 100
 fading_dB_values = np.random.normal(loc=-10, scale=2, size=num_signals)
 
 # Calcolare l'RSSI con rumore per ciascun segnale per entrambi i nodi
@@ -41,25 +42,25 @@ mean2 = np.mean(rssi_values_node2)
 
 
 mean1_qm = mean1-2
-mean1_qp = mean1 +1
+mean1_qp = mean1+1
 
-mean2_qm = mean2-4
-mean2_qp = mean2 + 4
+mean2_qm = mean2-3
+mean2_qp = mean2+2
 
 setA = []
 setB = []
 
 
+# Create Vocabulary for A
 for i in range(0,len(rssi_values_node1)-1):
     if(rssi_values_node1[i]<(mean1_qm) or rssi_values_node1[i]>(mean1_qp)):
         setA.append([i])
 
+# create Vocabulary for B 
 for i in range(0,len(rssi_values_node2)-1):
     if(rssi_values_node2[i]<(mean2_qm) or rssi_values_node2[i] > (mean2_qp) ):
          setB.append([i])
 
-
- 
 print("SetA: ", setA, "Length: ", len(setA))
 print("SetB: ", setB, "Length: ", len(setB))
 
@@ -76,10 +77,18 @@ for element1 in setA:
 for element in setB:
     if element not in setA:
         differences.append(element)
-    
+
+bloom_filter = BloomFilter(capacity=1000, error_rate=0.001)
+for a in setA:
+    bloom_filter.add(a)
+
+missing_in_A = []
+for b in setB:
+    if b not in bloom_filter:
+        missing_in_A.append(b)
 
 print("Differences: ", differences, "Length: ", len(differences))
-
+print("Probably missing: ", missing_in_A)
 
 # Plot dei valori RSSI per entrambi i nodi
 plt.figure(figsize=(10, 6))

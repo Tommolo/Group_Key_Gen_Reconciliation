@@ -53,9 +53,6 @@ for i in range(0,len(rssi_values_node2)-1):
 print("SetA: ", setA, "Length: ", len(setA))
 print("SetB: ", setB, "Length: ", len(setB))
 
-differences = []
-chaff_points = list(range(0,num_signals))
-
 bloom_filter = BloomFilter(capacity=1000, error_rate=0.001)
 for a in setA:
     bloom_filter.add(a)

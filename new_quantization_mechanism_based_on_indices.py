@@ -25,7 +25,7 @@ def calculate_rssi(P_tx_dBm, distance_m, frequency_Hz, fading_dB, noise_std_dB):
 
 # Esempio di parametri
 P_tx_dBm = 20        # Potenza trasmessa in dBm
-distance_m = 100     # Distanza in metri
+distance_m = 10     # Distanza in metri
 frequency_Hz = 2.4 * 10**9  # Frequenza in Hz (2.4 GHz)
 noise_std_dB = 2     # Deviazione standard del rumore gaussiano in dB
 
@@ -41,11 +41,11 @@ mean1 = np.mean(rssi_values_node1)
 mean2 = np.mean(rssi_values_node2)
 
 
-mean1_qm = mean1-2
-mean1_qp = mean1+1
+mean1_qm = mean1 - 2
+mean1_qp = mean1 + 2
 
-mean2_qm = mean2-3
-mean2_qp = mean2+2
+mean2_qm = mean2 - 4
+mean2_qp = mean2 + 4
 
 setA = []
 setB = []
@@ -86,6 +86,8 @@ missing_in_A = []
 for b in setB:
     if b not in bloom_filter:
         missing_in_A.append(b)
+
+
 
 print("Differences: ", differences, "Length: ", len(differences))
 print("Probably missing: ", missing_in_A)

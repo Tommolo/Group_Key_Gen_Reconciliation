@@ -32,17 +32,15 @@ def main():
     string1 = generate_random_string(128)
     string2 = generate_random_string(128)
 
-    string3 = generate_random_string(128)
     string4 = generate_random_string(128)
-    
     string5 = generate_random_string(128)
     string6 = generate_random_string(128)
     
-    print("String1: ", string1,"\n", "String2: ","\n", string2,"\n", "String3: ", string3, "\n",)
+    print("String1: ", string1,"\n", "String2: ","\n", string2,"\n")
 
     # Genera un insieme di sottostringhe uniche di 8 bit
-    unique_substrings = generate_unique_substrings([string1, string2, string3], 8)
-    common_substrings = find_common_substrings([string1, string2, string3], 8)
+    unique_substrings = generate_unique_substrings([string1, string2], 8)
+    common_substrings = find_common_substrings([string1, string2], 8)
    
     print("Insieme di sottostringhe uniche di 8 bit:")
     for substring in unique_substrings:

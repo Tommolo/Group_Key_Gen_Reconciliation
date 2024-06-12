@@ -30,7 +30,7 @@ frequency_Hz = 2.4 * 10**9  # Frequenza in Hz (2.4 GHz)
 noise_std_dB = 2     # Deviazione standard del rumore gaussiano in dB
 
 # Generare un set di x valori di fading per entrambi i nodi
-num_signals= 100
+num_signals= 1000
 fading_dB_values = np.random.normal(loc=-10, scale=2, size=num_signals)
 
 # Calcolare l'RSSI con rumore per ciascun segnale per entrambi i nodi

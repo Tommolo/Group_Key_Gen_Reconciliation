@@ -2,6 +2,10 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 from pybloom_live import BloomFilter
+import random
+from sympy import symbols, Poly
+from scipy.stats import rice
+
 
 def calculate_rssi(P_tx_dBm, distance_m, frequency_Hz, fading_dB, noise_std_dB):
     # Speed of light in m/s
@@ -21,55 +25,111 @@ def calculate_rssi(P_tx_dBm, distance_m, frequency_Hz, fading_dB, noise_std_dB):
     noise_dB = np.random.normal(loc=0, scale=noise_std_dB)
     P_rx_dBm_with_noise = P_rx_dBm + noise_dB
     
-    return round(P_rx_dBm_with_noise,2)
+    return round(P_rx_dBm_with_noise,2) #round(P_rx_dBm_with_noise,2) 
 
 # Parameters
 P_tx_dBm = 20        # Transmission power in dBm
-distance_m = 100     # Distance
+distance_m = 100   # Distance
 frequency_Hz = 2.4 * 10**9  # Frequency in Hz (2.4 GHz)
 noise_std_dB = 2     # standard deviation in dB
 
 # generation of fading for 100 signals
-num_signals= 100
-fading_dB_values = np.random.normal(loc=-10, scale=2, size=num_signals)
+num_signals=100
+K_factor = 10  # Rician K-factor
+
+# Generate Rician fading values
+fading_linear = rice.rvs(K_factor, size=num_signals)
+fading_dB_values_alice_bob = 20 * np.log10(fading_linear)
+fading_dB_values_adversary = 20 * np.log10(rice.rvs(K_factor, size=num_signals))
+
 
 # RSSI with noise for node1 and node2
-rssi_values_node1 = [calculate_rssi(P_tx_dBm, distance_m, frequency_Hz, fading_dB, noise_std_dB) for fading_dB in fading_dB_values]
-rssi_values_node2 = [calculate_rssi(P_tx_dBm, distance_m, frequency_Hz, fading_dB, noise_std_dB) for fading_dB in fading_dB_values]
+rssi_values_node1 = [calculate_rssi(P_tx_dBm, distance_m, frequency_Hz, fading_dB, noise_std_dB) for fading_dB in fading_dB_values_alice_bob]
+rssi_values_node2 = [calculate_rssi(P_tx_dBm, distance_m, frequency_Hz, fading_dB, noise_std_dB) for fading_dB in fading_dB_values_alice_bob]
+#rssi_values_adversary = [calculate_rssi(P_tx_dBm, distance_m, frequency_Hz, fading_dB, noise_std_dB)for fading_dB in fading_dB_values_adversary]
 
-
-setA = []
-setB = []
+vocabularyA = []
+vocabularyB = []
 
 
 # Create Vocabulary for A
 for i in range(0,len(rssi_values_node1)-1):
-        setA.append(rssi_values_node1[i])
+        vocabularyA.append(rssi_values_node1[i])
 
 # create Vocabulary for B 
 for i in range(0,len(rssi_values_node2)-1):
-         setB.append(rssi_values_node2[i])
+         vocabularyB.append(rssi_values_node2[i])
 
-print("SetA: ", setA, "Length: ", len(setA))
-print("SetB: ", setB, "Length: ", len(setB))
+print("SetA: ", sorted(set(vocabularyA)), "Length: ", len(set(vocabularyA)))
+print("SetB: ", sorted(set(vocabularyB)), "Length: ", len(set(vocabularyB)))
+
+
+def generate_random_excluding_range(data_set, lower_bound, upper_bound, num_values):
+    # Find min max in the set
+    min_value = min(data_set) -2
+    max_value = max(data_set) +2
+    
+    # Check if lower bound and upper bound are correct
+    if lower_bound >= upper_bound:
+        raise ValueError("Il lower_bound deve essere minore dell'upper_bound")
+    
+    if min_value <= lower_bound or max_value >= upper_bound:
+        raise ValueError("Il range del set deve essere all'interno dell'intervallo [lower_bound, upper_bound]")
+    
+    random_values = []
+    
+    while len(random_values) < num_values:
+        rand_value = random.uniform(lower_bound, upper_bound)
+        
+        # Verifica se il valore casuale è al di fuori dell'intervallo compreso tra min_value e max_value
+        if rand_value < min_value or rand_value > max_value:
+            random_values.append(round(rand_value,2))
+    
+    return random_values
+
+
+lower_bound = -100
+upper_bound = -30
+num_values =  100
+
+chaff_points=set(generate_random_excluding_range(set(vocabularyA),lower_bound,upper_bound,num_values))
+
+
+print(chaff_points)
+
+fuzzy_vault = chaff_points.union(set(vocabularyA))
+
+print("Fuzzy Vault:", fuzzy_vault)
 
 bloom_filter = BloomFilter(capacity=1000, error_rate=0.001)
-for a in setA:
+for a in vocabularyA:
     bloom_filter.add(a)
 
 common_values = []
-for b in setB:
+for b in vocabularyB:
     if b in bloom_filter:
       common_values.append(b)
 
-print("Common values: ", common_values)
+print ("Common values: ", sorted(set(common_values)),"Length: ", len(set(common_values)))
+
+
+matches=[]
+for element in fuzzy_vault:
+     for value in set(vocabularyB):
+          if (value==element):
+               matches.append(value)
+
+print("Matches:", sorted(matches),"Length: ",len(matches))
+
+
 
 # Plot of balues for both nodes
 plt.figure(figsize=(10, 6))
-plt.plot(rssi_values_node1, label='Node 1', marker='o')
-plt.plot(rssi_values_node2, label='Node 2', marker='x')
+plt.plot(rssi_values_node1, label='Alice', marker='o')
+plt.plot(rssi_values_node2, label='Bob', marker='x')
+#plt.plot(rssi_values_adversary,label='Adversary ',color='red', marker='X')
 plt.title('RSSi channel Probes')
-plt.xlabel('Numero of signals')
+plt.xlabel('Number of samples')
 plt.ylabel('RSSI (dBm)')
 plt.legend()
 plt.grid(True)

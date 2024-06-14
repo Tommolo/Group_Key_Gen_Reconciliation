@@ -1,20 +1,20 @@
-def map_decimals_to_naturals(decimal_values):
-    # Arrotonda ciascun valore decimale all'intero più vicino e ordina i valori
-    rounded_values = sorted(map(round, decimal_values))
+def calcola_somma_precedenti(dizionario, lista):
+    nuovo_dizionario = {}
     
-    # Crea un dizionario che mappa ciascun valore arrotondato a un indice univoco
-    value_index_map = {value: index for index, value in enumerate(set(rounded_values))}
+    # Ordina le chiavi del dizionario per sicurezza
+    chiavi_ordinate = sorted(dizionario.keys())
     
-    # Mappa ciascun valore decimale al suo indice nell'insieme degli arrotondati
-    mapped_values = [value_index_map[round(value)] for value in decimal_values]
+    for l in lista:
+        somma_probabilita = 0
+        for chiave in chiavi_ordinate:
+            if l > chiave:
+                somma_probabilita += dizionario[chiave]
+        nuovo_dizionario[l] = somma_probabilita
     
-    return mapped_values
+    return nuovo_dizionario
 
-# Esempio di utilizzo
-decimal_values = [3.14, -2.71, 1.618, -0.577, 2.718, -3.14, 4.669, -1.303]
-decimal_values2 = [3.14, -2.71, 1.618, -0.577, 2.718, -3.14, 4.669, -1.303]
-mapped_values = map_decimals_to_naturals(decimal_values)
-mapped_values2 = map_decimals_to_naturals(decimal_values2)
-
-print("Valori mappati:", mapped_values)
-print("Valori mappati:", mapped_values2)
+# Esempio di utilizzo:
+dizionario = {4: 0.001, 5: 0.005, 6: 0.008, 7: 0.014, 8: 0.02, 9: 0.04, 10: 0.061, 11: 0.094, 12: 0.108, 13: 0.116, 14: 0.121, 15: 0.113, 16: 0.105, 17: 0.069, 18: 0.045, 19: 0.035, 20: 0.022, 21: 0.009, 22: 0.01, 23: 0.002, 24: 0.001, 26: 0.001}
+lista = list(range(2, 30))
+nuovo_dizionario = calcola_somma_precedenti(dizionario, lista)
+print(nuovo_dizionario)

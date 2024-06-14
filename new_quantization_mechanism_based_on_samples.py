@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pybloom_live import BloomFilter
 import random
-from sympy import symbols, Poly
 from scipy.stats import rice
 
 
@@ -29,18 +28,18 @@ def calculate_rssi(P_tx_dBm, distance_m, frequency_Hz, fading_dB, noise_std_dB):
 
 # Parameters
 P_tx_dBm = 20        # Transmission power in dBm
-distance_m = 100   # Distance
+distance_m = 10   # Distance
 frequency_Hz = 2.4 * 10**9  # Frequency in Hz (2.4 GHz)
 noise_std_dB = 2     # standard deviation in dB
 
 # generation of fading for 100 signals
-num_signals=100
-K_factor = 10  # Rician K-factor
+num_signals=128
+
 
 # Generate Rician fading values
-fading_linear = rice.rvs(K_factor, size=num_signals)
-fading_dB_values_alice_bob = 20 * np.log10(fading_linear)
-fading_dB_values_adversary = 20 * np.log10(rice.rvs(K_factor, size=num_signals))
+fading_dB_values_alice_bob =  np.random.normal(loc=-10, scale=2, size=num_signals)
+fading_dB_values_adversary =  np.random.normal(loc=-10, scale=2, size=num_signals)
+
 
 
 # RSSI with noise for node1 and node2
@@ -71,23 +70,24 @@ def generate_random_excluding_range(data_set, lower_bound, upper_bound, num_valu
     
     # Check if lower bound and upper bound are correct
     if lower_bound >= upper_bound:
-        raise ValueError("Il lower_bound deve essere minore dell'upper_bound")
+        raise ValueError("The lower_bound must be less than the upper_bound")
     
     if min_value <= lower_bound or max_value >= upper_bound:
-        raise ValueError("Il range del set deve essere all'interno dell'intervallo [lower_bound, upper_bound]")
+        raise ValueError("The range of the set must be within the range [lower_bound, upper_bound]")
     
     random_values = []
     
     while len(random_values) < num_values:
         rand_value = random.uniform(lower_bound, upper_bound)
         
-        # Verifica se il valore casuale è al di fuori dell'intervallo compreso tra min_value e max_value
+        # Checks whether the random value is outside the range between min_value and max_value
         if rand_value < min_value or rand_value > max_value:
             random_values.append(round(rand_value,2))
     
     return random_values
 
 
+# set parameters for random points generation
 lower_bound = -100
 upper_bound = -30
 num_values =  100
@@ -95,8 +95,9 @@ num_values =  100
 chaff_points=set(generate_random_excluding_range(set(vocabularyA),lower_bound,upper_bound,num_values))
 
 
-print(chaff_points)
+print("Chaff Points", chaff_points)
 
+# create fuzzy-vault by union chaff points with point in setA
 fuzzy_vault = chaff_points.union(set(vocabularyA))
 
 print("Fuzzy Vault:", fuzzy_vault)
@@ -113,13 +114,14 @@ for b in vocabularyB:
 print ("Common values: ", sorted(set(common_values)),"Length: ", len(set(common_values)))
 
 
-matches=[]
+# B checks which values match with his own setB. The matches values are put into setR.
+setR=[]
 for element in fuzzy_vault:
      for value in set(vocabularyB):
           if (value==element):
-               matches.append(value)
+               setR.append(value)
 
-print("Matches:", sorted(matches),"Length: ",len(matches))
+print("Matches:", sorted(setR),"Length: ",len(setR))
 
 
 

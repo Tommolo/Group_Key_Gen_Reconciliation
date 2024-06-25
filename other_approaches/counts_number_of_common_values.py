@@ -27,12 +27,10 @@ P_tx_dBm = 20
 distance_m = 10
 frequency_Hz = 2.4 * 10**9
 noise_std_dB = 2
-num_signals = 128
-
+num_signals = 100
 iterations = 1000
 
 common_values_counts = []
-probability = []
 
 for _ in range(iterations):
     fading_dB_values_alice_bob = np.random.normal(loc=-10, scale=2, size=num_signals)
@@ -44,50 +42,16 @@ for _ in range(iterations):
     vocabularyB = rssi_values_node2[:-1]
     
     common_values = [b for b in vocabularyB if b in vocabularyA]
-
+    print(common_values)
     common_values_counts.append(len(set(common_values)))
-    
 
+   
 
-def calcola_frequenza_e_probabilita(lista):
-    dizionario_probabilita = {}
-    lunghezza_lista = len(lista)
-    
-    for valore in sorted(lista):
-        if valore not in dizionario_probabilita:
-            frequenza = lista.count(valore)
-            probabilita = frequenza / lunghezza_lista
-            dizionario_probabilita[valore] = probabilita
-            
-    return dizionario_probabilita
-
-probability_of_success=[]
-dictionary_value_probability=calcola_frequenza_e_probabilita(common_values_counts)
-print(calcola_frequenza_e_probabilita(common_values_counts))
-
-def compute_success_probability(dizionario, lista):
-    nuovo_dizionario = {}
-    
-    # Ordina le chiavi del dizionario per sicurezza
-    chiavi_ordinate = sorted(dizionario.keys())
-    
-    for l in lista:
-        somma_probabilita = 0
-        for chiave in chiavi_ordinate:
-            if l > chiave:
-                somma_probabilita += dizionario[chiave]
-        nuovo_dizionario[l-1] = 1 - somma_probabilita
-    
-    return nuovo_dizionario
-
-nuovo_dizionario = compute_success_probability((dictionary_value_probability),list(range(2,30)))
-print(compute_success_probability((dictionary_value_probability),list(range(2,30))))
-# Plot the histogram
 # Plot the histogram
 plt.figure(figsize=(10, 6))
-plt.plot(nuovo_dizionario.keys(), nuovo_dizionario.values(), marker='o', linestyle='-', color='b')
-plt.title('Probability Graph')
-plt.xlabel('Polynomial degree')
-plt.ylabel('Success Probability')
+plt.hist(common_values_counts, bins=range(min(common_values_counts), max(common_values_counts) + 1, 1), edgecolor='black')
+plt.title('Histogram of Common Values Count Over 1000 Iterations')
+plt.xlabel('Number of Common Values')
+plt.ylabel('Frequency')
 plt.grid(True)
 plt.show()

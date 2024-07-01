@@ -1,15 +1,15 @@
 import numpy as np
 from scipy.stats import nakagami
 import matplotlib.pyplot as plt
-import math
 
-def generate_nakagami_m_channel(num_samples, m, Omega):
+
+def generate_nakagami_m_channel(num_measurements, m, Omega):
     # Generate Nakagami-m distributed magnitudes
-    magnitudes = nakagami.rvs(m, scale=Omega, size=num_samples)
+    magnitudes = nakagami.rvs(m, scale=Omega, size=num_measurements)
     return magnitudes
 
 # Example parameters
-num_samples = 128
+num_measurements = 128
 m = 3  # Shape parameter (typically m >= 0.5)
 
 Omega_alice = 1  # Scale parameter (mean power) for Alice
@@ -23,12 +23,12 @@ all_common_values_ba_ae = []
 
 for _ in range(iterations):
     # Generate h_ba channel coefficient
-    h_ba = generate_nakagami_m_channel(num_samples, m, Omega_alice)
+    h_ba = generate_nakagami_m_channel(num_measurements, m, Omega_alice)
 
     # Generate h_ae channel coefficient
-    h_ae = generate_nakagami_m_channel(num_samples, m, Omega_eve)
+    h_ae = generate_nakagami_m_channel(num_measurements, m, Omega_eve)
 
-    eps = np.random.normal(loc=0, scale=1, size=num_samples)
+    eps = np.random.normal(loc=0, scale=1, size=num_measurements)
 
     # Compute the cross-correlation
     h_ab = rho * h_ba + (1 - rho**2 * eps)**1/2  # Update h_ab

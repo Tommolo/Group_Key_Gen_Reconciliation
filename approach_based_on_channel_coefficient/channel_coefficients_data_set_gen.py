@@ -11,19 +11,20 @@ def generate_nakagami_m_channel(num_measurements, m, Omega):
 
 # Example parameters
 num_measurements = 128
-m = 3 # Shape parameter (typically m >= 0.5)
+m_ab = 3 # Shape parameter (typically m >= 0.5)
+m_ae = 2
 
 Omega_alice_bob = 1  # Scale parameter (mean power)
-Omega_alice_eve = 2  # Scale parameter (mean power)
+Omega_alice_eve = 1  # Scale parameter (mean power)
 
 rho = 0.97 # cross correlation 
 
 
 # Generate h_ba channel coefficient
-h_ba = generate_nakagami_m_channel(num_measurements, m, Omega_alice_bob)
+h_ba = generate_nakagami_m_channel(num_measurements, m_ab, Omega_alice_bob)
 
 # Generate h_ae channel coefficient
-h_ae = generate_nakagami_m_channel(num_measurements, m, Omega_alice_eve)
+h_ae = generate_nakagami_m_channel(num_measurements, m_ae, Omega_alice_eve)
 
 #Gaussian-distributed channel-indipendent measurement error at Bob
 eps = np.random.normal(loc=0, scale=1, size=num_measurements)
@@ -65,3 +66,22 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
+
+def plot_nakagami_distribution(samples, color, label):
+    """Plot histogram of Nakagami samples."""
+    plt.hist(samples, bins=30, density=True, color=color, alpha=0.7, label=label)
+    plt.title(f'Nakagami-m different distribution ')
+    plt.xlabel('Magnitude')
+    plt.ylabel('Probability Density')
+    plt.legend()
+    plt.grid(True)
+
+samples=[h_ab,h_ba]
+plot_nakagami_distribution(h_ab,color='green',label='A2B')
+plot_nakagami_distribution(h_ba,color='blue',label='B2A')
+plot_nakagami_distribution(h_ae,color='red',label='A2E')
+
+
+
+plt.tight_layout()
+plt.show()

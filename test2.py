@@ -1,35 +1,44 @@
 import numpy as np
-from scipy.special import gammaincc
-from scipy.optimize import root_scalar
+import matplotlib.pyplot as plt
 
-# Function Q of Marcum
-def Q_m(m, alpha, beta):
-    return gammaincc(m, (alpha**2 + beta**2) / 2) * np.exp(-alpha**2 / 2)
+# Constants
+k_B = 1.380649e-23  # Boltzmann constant (J/K)
 
-# Function to solve inverse CDF for gamma_ab
-def inverse_cdf(gamma_ab, gamma_ba, m, rho, gamma, r):
-    alpha = np.sqrt(2 * m * rho * gamma_ba / (gamma * (1 - rho)))
-    beta = np.sqrt(2 * m * gamma_ab / (gamma * (1 - rho)))
-    return Q_m(m, alpha, beta) - (1 - r)
+def johnson_nyquist_noise(R, T, f_start, f_end, f_points):
+    """
+    Calculate the Johnson-Nyquist noise power spectral density.
+    
+    Parameters:
+    R (float): Resistance in ohms (Ω)
+    T (float): Temperature in kelvin (K)
+    f_start (float): Start frequency in Hz
+    f_end (float): End frequency in Hz
+    f_points (int): Number of frequency points
+    
+    Returns:
+    f (numpy array): Frequency array
+    S (numpy array): Power spectral density array
+    """
+    f = np.linspace(f_start, f_end, f_points)
+    S = 4 * k_B * T * R
+    return f, S
 
 # Parameters
-N = 100  # Number of RSS samples
-m = 2  # Order of the Marcum-Q function
-rho = 0.8  # Correlation coefficient
-gamma = 1.0  # Mean value of RSS
+R = 1000  # Resistance in ohms
+T = 300   # Temperature in kelvin
+f_start = 1  # Start frequency in Hz
+f_end = 1e6  # End frequency in Hz
+f_points = 500  # Number of frequency points
 
-# Generate RSS samples for Alice
-gamma_ba_samples = np.random.gamma(m, gamma / m, N)
+# Calculate noise
+frequencies, noise_psd = johnson_nyquist_noise(R, T, f_start, f_end, f_points)
 
-# Generate RSS samples for Bob
-gamma_ab_samples = np.zeros(N)
-for i in range(N):
-    r = np.random.rand()
-    try:
-        result = root_scalar(inverse_cdf, args=(gamma_ba_samples[i], m, rho, gamma, r), bracket=[0, 10*gamma])
-        gamma_ab_samples[i] = result.root
-    except ValueError as e:
-        print(f"Error in solving equation for i={i}: {e}")
-        gamma_ab_samples[i] = np.nan
-
-print(gamma_ba_samples, gamma_ab_samples)
+# Plot the results
+plt.figure(figsize=(10, 6))
+plt.plot(frequencies, noise_psd * np.ones_like(frequencies), label='Johnson-Nyquist Noise')
+plt.xlabel('Frequency (Hz)')
+plt.ylabel('Power Spectral Density (W/Hz)')
+plt.title('Johnson-Nyquist Noise Power Spectral Density')
+plt.legend()
+plt.grid(True)
+plt.show()

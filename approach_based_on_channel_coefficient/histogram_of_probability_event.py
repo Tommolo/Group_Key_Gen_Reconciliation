@@ -16,7 +16,6 @@ m = 3  # Shape parameter (typically m >= 0.5)
 Omega_alice = 1  # Scale parameter (mean power)
 Omega_eve = 2  # Scale parameter (mean power)
 
-
 rho = 0.97  # Example correlation coefficient
 iterations = 1000
 intersection_ba_ab_lengths = []

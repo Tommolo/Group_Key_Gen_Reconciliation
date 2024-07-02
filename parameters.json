@@ -1,0 +1,23 @@
+{
+    "simulation_parameters": {
+      "num_of_probes": 200,
+      "m": 3,
+      "Omega": 1,
+      "Pt": 10,
+      "alpha": 2,
+      "noise_floor": 4e-14,
+      "num_dec_values": 2,
+      "distances": {
+        "d_ab": 1,
+        "d_ae": 1,
+        "d_be": 1
+      },
+      "correlation_coefficients": {
+        "rho_Alice_Bob": 0.97,
+        "rho_Alice_Eve": 0.1,
+        "rho_Bob_Eve": 0.1
+      },
+      "iterations": 1000
+    }
+  }
+  

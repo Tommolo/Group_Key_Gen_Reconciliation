@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 def plot_success_probability_graph(alice_dictionary, eve_dictionary):
     # Plot the success probability graph
@@ -55,4 +57,24 @@ def plot_probability_distribution(sorted_lengths_intersection_ab_ba, sorted_prob
     plt.grid(True)
     
     plt.tight_layout()
+    plt.show()
+
+# Plot Number of common values for Eve that read communication when distance changes
+def plot_of_values_Eve_different_distance(all_common_values,distances):
+    # Create a plot
+    plt.figure(figsize=(10, 5))  # Set the figure size
+    plt.plot(all_common_values, distances, marker='o', linestyle='-', color='r', label='eve')
+
+    # Add titles and labels
+    plt.title('Average of common values for Eve at different changes')
+    plt.xlabel('Common values')
+    plt.ylabel('Distances')
+
+    # Add a grid
+    plt.grid(True)
+
+    # Add a legend
+    plt.legend()
+
+    # Show the plot
     plt.show()

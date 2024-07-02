@@ -2,8 +2,6 @@ import numpy as np
 from scipy.stats import nakagami
 
 
-
-
 def compute_rss_common_values(iterations, num_of_probes, m, Omega, rho_Alice_Bob, rho_Alice_Eve, rho_Bob_Eve, Pt, d_ab, d_ae, d_be, alpha, noise_floor, num_dec_values):
     # Initialize lists to store intersection lengths
     all_common_values_ab_ba = []

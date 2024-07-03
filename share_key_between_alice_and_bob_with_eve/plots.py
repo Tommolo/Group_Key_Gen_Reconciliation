@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 
 
 def plot_success_probability_graph(alice_dictionary, eve_dictionary):
@@ -60,21 +59,34 @@ def plot_probability_distribution(sorted_lengths_intersection_ab_ba, sorted_prob
     plt.show()
 
 # Plot Number of common values for Eve that read communication when distance changes
-def plot_of_values_Eve_different_distance(all_common_values,distances):
+def plot_of_values_Eve_different_distance(distances,mean):
     # Create a plot
     plt.figure(figsize=(10, 5))  # Set the figure size
-    plt.plot(all_common_values, distances, marker='o', linestyle='-', color='r', label='eve')
-
+    plt.plot(distances, mean, marker='o', linestyle='-', color='r', label='eve')
     # Add titles and labels
-    plt.title('Average of common values for Eve at different changes')
-    plt.xlabel('Common values')
-    plt.ylabel('Distances')
-
+    plt.title('Average of common RSS values for Eve at different distance')
+    plt.xlabel('Distances')
+    plt.ylabel('Average common values')
     # Add a grid
     plt.grid(True)
-
     # Add a legend
     plt.legend()
+    # Show the plot
+    plt.show()
 
+
+# Plot Number of common values for Eve that read communication when distance changes
+def plot_of_values_Eve_different_rho(rho,all_common_values_mean):
+    # Create a plot
+    plt.figure(figsize=(10, 5))  # Set the figure size
+    plt.plot(rho, all_common_values_mean, marker='o', linestyle='-', color='r', label='eve')
+    # Add titles and labels
+    plt.title('Average of common RSS values for Eve with different rho')
+    plt.xlabel('Correlation coefficients')
+    plt.ylabel('Average common values')
+    # Add a grid
+    plt.grid(True)
+    # Add a legend
+    plt.legend()
     # Show the plot
     plt.show()

@@ -1,22 +1,43 @@
 import numpy as np
 from scipy.stats import nakagami
+import json
+
+# Specify the path to your JSON file
+file_path = r'C:\Users\pieru\Documents\Python\Group_Key_Gen_Reconciliation\share_key_between_alice_and_bob_with_eve\parameters.json'
+
+# Open and read the JSON file
+with open(file_path, 'r') as file:
+    data = json.load(file)
+
+num_of_probes = data['simulation_parameters']['num_of_probes']
+iterations = data['simulation_parameters']['iterations']
+Omega = data['simulation_parameters']['Omega']
+m = data['simulation_parameters']['m']
+Pt = data['simulation_parameters']['Pt']
+alpha = data['simulation_parameters']['alpha']
+noise_floor = data['simulation_parameters']['noise_floor']
+num_dec_values = data['simulation_parameters']['num_dec_values']
 
 
-def compute_rss_common_values(iterations, num_of_probes, m, Omega, rho_Alice_Bob, rho_Alice_Eve, rho_Bob_Eve, Pt, d_ab, d_ae, d_be, alpha, noise_floor, num_dec_values):
+
+def generate_nakagami_m_channel():
+        # Generate Nakagami-m distributed magnitudes
+        magnitudes = nakagami.rvs(m, scale=Omega, size=num_of_probes)
+        return magnitudes
+
+
+
+def compute_rss_common_values(rho_Alice_Bob, rho_Alice_Eve, rho_Bob_Eve, d_ab, d_ae, d_be):
     # Initialize lists to store intersection lengths
     all_common_values_ab_ba = []
     all_common_values_ba_ae = []
     all_common_values_ba_be = []
     
     
-    def generate_nakagami_m_channel(num_probes, m, Omega):
-        # Generate Nakagami-m distributed magnitudes
-        magnitudes = nakagami.rvs(m, scale=Omega, size=num_probes)
-        return magnitudes
 
     for _ in range(iterations):
         # Generate h_ba channel coefficient
-        h_ba = generate_nakagami_m_channel(num_of_probes, m, Omega)
+        h_ba = generate_nakagami_m_channel()
 
         # Generate h_ae and h_be channel coefficients
         eps_ab = np.random.normal(loc=0, scale=1, size=num_of_probes)

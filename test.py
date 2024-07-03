@@ -1,4 +1,4 @@
-from all_common_values import *
+from share_key_between_alice_and_bob_with_eve.all_common_values import *
 
 # Simulation parameters
 num_of_probes = 200 #the number of signal send from alice to bob and viceversa

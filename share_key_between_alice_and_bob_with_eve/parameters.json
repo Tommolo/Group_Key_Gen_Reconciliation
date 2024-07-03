@@ -17,7 +17,7 @@
         "rho_Alice_Eve": 0.1,
         "rho_Bob_Eve": 0.1
       },
-      "iterations": 1000
+      "iterations": 10
     }
   }
   

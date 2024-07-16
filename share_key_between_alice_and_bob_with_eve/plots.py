@@ -1,11 +1,13 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 
+# Plot the success probability graph
 def plot_success_probability_graph(alice_dictionary, eve_dictionary):
-    # Plot the success probability graph
+
     plt.figure(figsize=(10, 6))
-    plt.plot(list(alice_dictionary.keys()), list(alice_dictionary.values()), marker='o', linestyle='-', color='b', label='A2B')
-    plt.plot(list(eve_dictionary.keys()), list(eve_dictionary.values()), marker='^', linestyle='-', color='r', label='A2E')
+    plt.plot(list(alice_dictionary.keys()), list(alice_dictionary.values()), marker='o', linestyle='-', color='b', label='B2A')
+    plt.plot(list(eve_dictionary.keys()), list(eve_dictionary.values()), marker='^', linestyle='-', color='r', label='B2E')
     plt.legend()
     plt.title('Probability Graph')
     plt.xlabel('Polynomial degree')
@@ -13,9 +15,32 @@ def plot_success_probability_graph(alice_dictionary, eve_dictionary):
     plt.grid(True)
     plt.show()
 
+# Plot the success probability graph
+def plot_channel_coefficients(h_ab, h_ba, h_be, maximum_ba, minimum_ba,maximum_ab,minimum_ab,maximum_be,minimum_be):
+    plt.figure(figsize=(10, 6))
+    plt.plot(h_ab.real, marker='o', linestyle='-', color='b', label='h_ab')
+    plt.plot(h_ba.real, marker='^', linestyle='-', color='g', label='h_ba')
+    plt.plot(h_be.real, marker='^', linestyle='-', color='r', label='h_be')
 
-def plot_common_values_histogram(all_common_values_ab_ba, all_common_values_ba_ae):
-    # Plot histogram of common values Alice and Bob
+    plt.axhline(maximum_ba.real, color='g', linestyle='--')
+    plt.axhline(minimum_ba.real, color='g', linestyle='--')
+
+    plt.axhline(maximum_ab.real, color='b', linestyle='--')
+    plt.axhline(minimum_ab.real, color='b', linestyle='--')
+
+    plt.axhline(maximum_be.real, color='r', linestyle='--')
+    plt.axhline(minimum_be.real, color='r', linestyle='--')
+
+    plt.legend()
+    plt.title('Channel coefficient')
+    plt.xlabel('Index')
+    plt.ylabel('channel coefficients')
+    plt.grid(True)
+    plt.show()
+
+
+# Plot histogram of common values Alice and Bob
+def plot_common_values_histogram(all_common_values_ab_ba, all_common_values_ab_ae):
     plt.figure(figsize=(12, 6))
     
     plt.subplot(1, 2, 1)
@@ -26,7 +51,7 @@ def plot_common_values_histogram(all_common_values_ab_ba, all_common_values_ba_a
 
     # Plot histogram of common values Alice and Eve
     plt.subplot(1, 2, 2)
-    plt.hist(all_common_values_ba_ae, bins=20, color='red', alpha=0.7, edgecolor='black')
+    plt.hist(all_common_values_ab_ae, bins=20, color='red', alpha=0.7, edgecolor='black')
     plt.title('Histogram of common values for Alice and Eve')
     plt.xlabel('Number of common values')
     plt.ylabel('Frequency')
@@ -36,7 +61,7 @@ def plot_common_values_histogram(all_common_values_ab_ba, all_common_values_ba_a
 
 
 def plot_probability_distribution(sorted_lengths_intersection_ab_ba, sorted_probs_intersection_ab_ba,
-                                  sorted_lengths_intersection_ba_ae, sorted_probs_intersection_ba_ae):
+                                  sorted_lengths_intersection_ab_ae, sorted_probs_intersection_ab_ae):
     # Plot histogram of the probability distribution function of common values for Alice and Bob
     plt.figure(figsize=(12, 6))
     
@@ -49,7 +74,7 @@ def plot_probability_distribution(sorted_lengths_intersection_ab_ba, sorted_prob
 
     # Plot histogram of the probability distribution function of common values for Alice and Eve
     plt.subplot(1, 2, 2)
-    plt.bar(sorted_lengths_intersection_ba_ae, sorted_probs_intersection_ba_ae, color='salmon', edgecolor='black')
+    plt.bar(sorted_lengths_intersection_ab_ae, sorted_probs_intersection_ab_ae, color='salmon', edgecolor='black')
     plt.xlabel('Common values')
     plt.ylabel('Probability')
     plt.title('Probability Distribution for Alice and Eve intersection')
@@ -58,35 +83,18 @@ def plot_probability_distribution(sorted_lengths_intersection_ab_ba, sorted_prob
     plt.tight_layout()
     plt.show()
 
-# Plot Number of common values for Eve that read communication when distance changes
-def plot_of_values_Eve_different_distance(distances,mean):
-    # Create a plot
-    plt.figure(figsize=(10, 5))  # Set the figure size
-    plt.plot(distances, mean, marker='o', linestyle='-', color='r', label='eve')
-    # Add titles and labels
-    plt.title('Average of common RSS values for Eve at different distance')
-    plt.xlabel('Distances')
-    plt.ylabel('Average common values')
-    # Add a grid
-    plt.grid(True)
-    # Add a legend
-    plt.legend()
-    # Show the plot
-    plt.show()
 
+def plot_ab_subset_ba_length_guard_band_change(delta_max_min,all_probabilities_ab_subset_ba):
 
-# Plot Number of common values for Eve that read communication when distance changes
-def plot_of_values_Eve_different_rho(rho,all_common_values_mean):
-    # Create a plot
-    plt.figure(figsize=(10, 5))  # Set the figure size
-    plt.plot(rho, all_common_values_mean, marker='o', linestyle='-', color='r', label='eve')
-    # Add titles and labels
-    plt.title('Average of common RSS values for Eve with different rho')
-    plt.xlabel('Correlation coefficients')
-    plt.ylabel('Average common values')
-    # Add a grid
+    # Plotting
+    plt.figure(figsize=(8, 6))  # Adjust figure size as needed
+    plt.plot(delta_max_min, all_probabilities_ab_subset_ba, color='blue', marker='o', linestyle='-')
+    # Adding labels and title
+    plt.xlabel('Delta')
+    plt.ylabel('Probabilities')
+    plt.title('AB set is subset BA guard band value changing')
     plt.grid(True)
-    # Add a legend
-    plt.legend()
-    # Show the plot
+    
+    plt.tight_layout()
     plt.show()
+    

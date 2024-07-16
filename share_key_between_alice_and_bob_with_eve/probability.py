@@ -1,14 +1,12 @@
-
-
-def calculate_probabilities(all_common_values_ab_ba, all_common_values_ba_ae, all_common_values_ba_be):
-    # Calculate probabilities: length as key and probability (number of elements/iterations) as value
+def calculate_probabilities(all_common_values_ab_ba, all_common_values_ab_ae, all_common_values_ba_be):
+    # Calculate probabilities: length as key and probability (number of elements/iterations) as value. Iterates over length of intersection count number of equal length and then divide for number of length common value.
     prob_intersection_ab_ba = {length: all_common_values_ab_ba.count(length) / len(all_common_values_ab_ba) for length in set(all_common_values_ab_ba)}
-    prob_intersection_ba_ae = {length: all_common_values_ba_ae.count(length) / len(all_common_values_ba_ae) for length in set(all_common_values_ba_ae)}
+    prob_intersection_ab_ae = {length: all_common_values_ab_ae.count(length) / len(all_common_values_ab_ae) for length in set(all_common_values_ab_ae)}
     prob_intersection_ba_be = {length: all_common_values_ba_be.count(length) / len(all_common_values_ba_be) for length in set(all_common_values_ba_be)}
 
     return {
         "prob_intersection_ab_ba": prob_intersection_ab_ba,
-        "prob_intersection_ba_ae": prob_intersection_ba_ae,
+        "prob_intersection_ab_ae": prob_intersection_ab_ae,
         "prob_intersection_ba_be": prob_intersection_ba_be
     }
 
@@ -18,8 +16,8 @@ def sort_probabilities(prob_intersection_ab_ba, prob_intersection_ba_ae, prob_in
     sorted_lengths_intersection_ab_ba = sorted(prob_intersection_ab_ba.keys())
     sorted_probs_intersection_ab_ba = [prob_intersection_ab_ba[length] for length in sorted_lengths_intersection_ab_ba]
 
-    sorted_lengths_intersection_ba_ae = sorted(prob_intersection_ba_ae.keys())
-    sorted_probs_intersection_ba_ae = [prob_intersection_ba_ae[length] for length in sorted_lengths_intersection_ba_ae]
+    sorted_lengths_intersection_ab_ae = sorted(prob_intersection_ba_ae.keys())
+    sorted_probs_intersection_ab_ae = [prob_intersection_ba_ae[length] for length in sorted_lengths_intersection_ab_ae]
 
     sorted_lengths_intersection_ba_be = sorted(prob_intersection_ba_be.keys())
     sorted_probs_intersection_ba_be = [prob_intersection_ba_be[length] for length in sorted_lengths_intersection_ba_be]
@@ -27,8 +25,10 @@ def sort_probabilities(prob_intersection_ab_ba, prob_intersection_ba_ae, prob_in
     return {
         "sorted_lengths_intersection_ab_ba": sorted_lengths_intersection_ab_ba,
         "sorted_probs_intersection_ab_ba": sorted_probs_intersection_ab_ba,
-        "sorted_lengths_intersection_ba_ae": sorted_lengths_intersection_ba_ae,
-        "sorted_probs_intersection_ba_ae": sorted_probs_intersection_ba_ae,
+
+        "sorted_lengths_intersection_ab_ae": sorted_lengths_intersection_ab_ae,
+        "sorted_probs_intersection_ab_ae": sorted_probs_intersection_ab_ae,
+
         "sorted_lengths_intersection_ba_be": sorted_lengths_intersection_ba_be,
         "sorted_probs_intersection_ba_be": sorted_probs_intersection_ba_be
         }
@@ -63,3 +63,10 @@ def compute_success_probability(dictionary, list):
         new_dictionary[l] = 1 - probability_sum
     
     return new_dictionary
+
+
+
+def probability_ab_subset_ba(all_time_ab_subset_ba):
+
+    return sum(all_time_ab_subset_ba)/len(all_time_ab_subset_ba)
+    

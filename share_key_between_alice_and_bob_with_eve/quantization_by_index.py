@@ -4,7 +4,7 @@ import numpy as np
 def index_quantization(channel_coefficients,delta_max,delta_min):
     index_quantization_list = []
     maximum = get_max(channel_coefficients,delta_max)
-    minimum = get_min(channel_coefficients,delta_max,delta_min)
+    minimum = get_min(channel_coefficients,delta_min)
 
     for i in range(0,len(channel_coefficients)):
         if(channel_coefficients[i] > maximum or channel_coefficients[i] < minimum):
@@ -19,9 +19,8 @@ def get_max(channel_coefficients,delta_max):
     return maximum
 
 #this method compute the mins of the band guard
-def get_min(channel_coefficients,delta_max,delta_min):
-    minimum = get_max(channel_coefficients, delta_max) - delta_min
+def get_min(channel_coefficients,delta_min):
+    minimum = np.mean(channel_coefficients) - delta_min
     return minimum          
 
 
-     

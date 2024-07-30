@@ -1,9 +1,8 @@
 {
     "simulation_parameters": {
-      "num_of_samples": 200,
       "num_dec_values": 2,
-      "iterations": 1000
-
+      "iterations":100  
+    
     }
   }
   

@@ -18,22 +18,22 @@ def plot_success_probability_graph(alice_dictionary, eve_dictionary):
 # Plot the success probability graph
 def plot_channel_coefficients(h_ab, h_ba, h_be, maximum_ba, minimum_ba,maximum_ab,minimum_ab,maximum_be,minimum_be):
     plt.figure(figsize=(10, 6))
-    plt.plot(h_ab.real, marker='o', linestyle='-', color='b', label='h_ab')
-    plt.plot(h_ba.real, marker='^', linestyle='-', color='g', label='h_ba')
-    plt.plot(h_be.real, marker='^', linestyle='-', color='r', label='h_be')
+    plt.plot(h_ba.real, marker='^', linestyle='-', color='b', label='H_ba')
+    #plt.plot(h_ab.real, marker='o', linestyle='-', color='b', label='h_ab')
+    #plt.plot(h_be.real, marker='^', linestyle='-', color='r', label='h_be')
 
-    plt.axhline(maximum_ba.real, color='g', linestyle='--')
-    plt.axhline(minimum_ba.real, color='g', linestyle='--')
+    plt.axhline(maximum_ba.real, color='r', linestyle='--')
+    plt.axhline(minimum_ba.real, color='r', linestyle='--')
 
-    plt.axhline(maximum_ab.real, color='b', linestyle='--')
-    plt.axhline(minimum_ab.real, color='b', linestyle='--')
+    #plt.axhline(maximum_ab.real, color='b', linestyle='--',label='Bob')
+    #plt.axhline(minimum_ab.real, color='b', linestyle='--')
 
-    plt.axhline(maximum_be.real, color='r', linestyle='--')
-    plt.axhline(minimum_be.real, color='r', linestyle='--')
+    #plt.axhline(maximum_be.real, color='r', linestyle='--',label='Eve')
+    #plt.axhline(minimum_be.real, color='r', linestyle='--')
 
     plt.legend()
-    plt.title('Channel coefficient')
-    plt.xlabel('Index')
+    plt.title('Channel coefficients samples')
+    plt.xlabel('Samples')
     plt.ylabel('channel coefficients')
     plt.grid(True)
     plt.show()
@@ -84,17 +84,50 @@ def plot_probability_distribution(sorted_lengths_intersection_ab_ba, sorted_prob
     plt.show()
 
 
-def plot_ab_subset_ba_length_guard_band_change(delta_max_min,all_probabilities_ab_subset_ba):
+
+    
+def plot_similarity_of_indexes_guard_band_change(delta_max_min,similarity_of_indexes_ab_mean,similarity_of_indexes_ae_mean):
 
     # Plotting
     plt.figure(figsize=(8, 6))  # Adjust figure size as needed
-    plt.plot(delta_max_min, all_probabilities_ab_subset_ba, color='blue', marker='o', linestyle='-')
+    plt.plot(delta_max_min, similarity_of_indexes_ab_mean, color='blue', marker='o', linestyle='-')
+    plt.plot(delta_max_min, similarity_of_indexes_ae_mean, color='red', marker='o', linestyle='-')
     # Adding labels and title
     plt.xlabel('Delta')
-    plt.ylabel('Probabilities')
-    plt.title('AB set is subset BA guard band value changing')
+    plt.ylabel('Similarity of indexes')
+    plt.title('Average of SI for alice and bob and for Alice and Eve')
     plt.grid(True)
     
+    plt.tight_layout()
+    plt.show()
+    
+
+def plot_genuine_points_different_channel_coefficients(num_of_samples,genuine_points):
+
+    # Plotting
+    plt.figure(figsize=(8, 6))  # Adjust figure size as needed
+    plt.plot(num_of_samples, genuine_points, color='blue', marker='o', linestyle='-')
+    # Adding labels and title
+    plt.xlabel('Number of samples')
+    plt.ylabel('Genuine points')
+    plt.title('Number of genuine points when number of channel coefficients change')
+    plt.grid(True)
+    
+    plt.tight_layout()
+    plt.show()
+    
+
+
+def plot_noisy_values_ab_subset_ba_num_of_samples_changes(num_of_samples,average_of_noisy_values):
+
+    # Plotting
+    plt.figure(figsize=(8, 6))  # Adjust figure size as needed
+    plt.plot(num_of_samples, average_of_noisy_values, color='blue', marker='o', linestyle='-')
+    # Adding labels and title
+    plt.xlabel('Number of coefficients')
+    plt.ylabel('Average of noisy points')
+    plt.title('Average of noisy (over n iterations) values ab subset of ba when number of samples changes')
+    plt.grid(True)  
     plt.tight_layout()
     plt.show()
     

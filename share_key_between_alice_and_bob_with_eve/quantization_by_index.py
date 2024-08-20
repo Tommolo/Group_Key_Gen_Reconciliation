@@ -1,26 +1,18 @@
-import numpy as np
 
-# This method takes all index values out of maximum and minimum range
-def index_quantization(channel_coefficients,delta_max,delta_min):
-    index_quantization_list = []
-    maximum = get_max(channel_coefficients,delta_max)
-    minimum = get_min(channel_coefficients,delta_min)
+# Discard all indexes out of the second interval of quantization
+def quantization_by_indexes_alice(channel_coefficients,quantization_intervals):
+    quantization_by_indexes=[]
+    for i in range(0,len(channel_coefficients)):
+        if channel_coefficients[i] >= quantization_intervals[3] or channel_coefficients[i] < quantization_intervals[2]:
+            quantization_by_indexes.append(i)
+    return quantization_by_indexes
+
+
+# Discard all indexes out of first second and third interval of quantization
+def quantization_by_indexes_bob(channel_coefficients,quantization_intervals):
+    quantization_by_indexes=[]
 
     for i in range(0,len(channel_coefficients)):
-        if(channel_coefficients[i] > maximum or channel_coefficients[i] < minimum):
-            index_quantization_list.append(i)
-    
-    return index_quantization_list
-
-
-#this method compute the max of the band guard
-def get_max(channel_coefficients,delta_max):
-    maximum = np.mean(channel_coefficients) + delta_max
-    return maximum
-
-#this method compute the mins of the band guard
-def get_min(channel_coefficients,delta_min):
-    minimum = np.mean(channel_coefficients) - delta_min
-    return minimum          
-
-
+        if channel_coefficients[i] >= quantization_intervals[4]:
+           quantization_by_indexes.append(i) 
+    return quantization_by_indexes

@@ -1,58 +1,153 @@
+from generate_channel_coefficients import generate_channel_coefficients
 import numpy as np
-from all_common_values import *
-from probability import *
+import matplotlib.pyplot as plt
+from quantization_by_index import *
 from other_methods import *
 from plots import *
 
-# Correlation coefficients
-rho_list = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.97]
 
-# Initialize an empty list to store the probabilities
-all_probabilities_ab_subset_ba = []
-
-delta_max_bob_range = np.arange(0,1.1,0.1)
-similarity_of_indexes_ab_mean = []
-similarity_of_indexes_ae_mean = []
-
-delta_min=0
-delta_max_min=[]
-
-average_of_noisy_values = []
-
-num_of_samples=[200,300,400,500,600,700,800,900,1000]
-
-delta_max_min_pr_1=[]
+# Number of iterations
+num_iterations = 100
+num_of_samples = [10,20,50,100,200,500,1000,2000,5000,8000]
+num_of_levels = 6
+count_subset = 0
 
 
-# Loop through different values of delta_max and delta_min_bob
-for delta_max in delta_max_bob_range:
-        delta_min +=0.5
-        statistycal_analysis = statistical_analysis_over_n_iterations(num_of_samples[0],rho_list[9], rho_list[0], rho_list[0], delta_max, delta_min)
-        delta_max_min.append("("+ str(np.round(delta_max,2)) + "," + str(np.round(delta_min,2))+ ")")
-        similarity_of_indexes_ab_mean.append(np.mean(statistycal_analysis.get("similarity_of_indexes_alice_bob")))
-        similarity_of_indexes_ae_mean.append(np.mean(statistycal_analysis.get("similarity_of_indexes_alice_eve")))
-
-# Compute common values with fixed Alice and eve rho=0.1
-delta_max_bob=1
-delta_min_bob=5.5
-
-genuine_points=[]
+set_ab_length=[]
+SI_list_ab = []
+SI_list_be = []
+rho_list = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+pr_si_1_ab=[]
+pr_si_1_be=[]
+pr_setB_greater_than_32 = []
 
 
-#number of genuine points when SI=1 but number of samples change.
+
+
+for rho in rho_list:
+    for _ in range(num_iterations):
+        # Generate channel coefficients
+        channel_coefficients = generate_channel_coefficients(num_of_samples[3], rho, rho_list[0], rho_list[0])
+
+        h_ab = channel_coefficients.get("h_ab")
+        h_ba = channel_coefficients.get("h_ba")
+        h_be = channel_coefficients.get("h_be")
+
+        # Ensure h_ab and h_ba are numpy arrays or lists
+        h_ab = np.array(h_ab.real)  # Convert to numpy array
+        h_ba = np.array(h_ba.real)  # Convert to numpy array
+        h_be = np.array(h_be.real) 
+        # Determine the minimum and maximum values of the array
+        min_val_ba = h_ba.min()
+        max_val_ba = h_ba.max()
+
+        min_val_ab = h_ab.min()
+        max_val_ab = h_ab.max()
+
+        min_val_be = h_be.min()
+        max_val_be = h_be.max()
+
+        # Calculate the quantization intervals
+        quantization_intervals_ba = np.linspace(min_val_ba, max_val_ba, num_of_levels)
+        quantization_intervals_ab = np.linspace(min_val_ab, max_val_ab, num_of_levels)
+        quantization_intervals_be = np.linspace(min_val_be, max_val_be, num_of_levels)
+
+
+        indexes_ba = quantization_by_indexes_alice(h_ba,quantization_intervals_ba)
+        indexes_ab = quantization_by_indexes_bob(h_ab,quantization_intervals_ab)
+        indexes_be = quantization_by_indexes_bob(h_be,quantization_intervals_be)
+
+        print(indexes_ba,len(indexes_ba))
+        print(indexes_ab)
+        print(indexes_be)
+
+        SI_ab = compute_si_ab(indexes_ba,indexes_ab,SI_list_ab,set_ab_length)
+        SI_be = compute_si_be(indexes_be,indexes_ba,SI_list_be)
+
+
+    Pr_si_ab_1=SI_list_ab.count(1)/num_iterations
+    pr_si_1_ab.append(Pr_si_ab_1)
+    
+    Pr_si_be_1=SI_list_be.count(1)/num_iterations
+
+    print("SI_ab",SI_ab)
+    print("SI_be",SI_be)
+    print("Pr(SI_ab=1)",Pr_si_ab_1)
+    print("Pr(SI_be=1)",Pr_si_be_1)
+    print("Pr(SI=1) when rho change",pr_si_1_ab)
+
+    count_when_is_greater_than_32 = len([num for num in set_ab_length if num >= 32])
+
+    print("Pr(|setB|>=32)",count_when_is_greater_than_32/num_iterations)
+    SI_list_ab.clear()
+    SI_list_be.clear()
+    set_ab_length.clear()
+
 for samples in num_of_samples:
-        statistical_analysis = make_quantization_for_channel_coefficient(samples,rho_list[9], rho_list[0], rho_list[0],delta_max_bob,delta_min_bob)
-        genuine_points.append(len(statistical_analysis.get("index_quantization_list_ab")))
+    for _ in range(num_iterations):
+        # Generate channel coefficients
+        channel_coefficients = generate_channel_coefficients(samples, 0.9, 0.1, 0.1)
 
-#plot_of_values_Eve_different_distance(all_common_values_mean_different_distances,distances_string)
-#plot_of_values_Eve_different_rho(rho_list,all_common_values_mean_different_rho)
-#plot_common_values_histogram(common_vals["all_common_values_ab_ba"],common_vals["all_common_values_ba_be"])
-#plot_probabilities_noise_values(probabilities_noise_values,thresholds)
-#plot_probability_distribution(sorted_lengths_intersection_ab_ba,sorted_probs_intersection_ab_ba,sorted_lengths_intersection_ba_be,sorted_probs_intersection_ba_be)
-#plot_success_probability_graph(alice_dictionary,eve_dictionary)
-#plot_noisy_values_ab_subset_ba_num_of_samples_changes(num_of_samples,average_of_noisy_values)
-plot_similarity_of_indexes_guard_band_change(delta_max_min,similarity_of_indexes_ab_mean,similarity_of_indexes_ae_mean)
-plot_genuine_points_different_channel_coefficients(num_of_samples,genuine_points)
+        h_ab = channel_coefficients.get("h_ab")
+        h_ba = channel_coefficients.get("h_ba")
+        h_be = channel_coefficients.get("h_be")
+
+        # Ensure h_ab and h_ba are numpy arrays or lists
+        h_ab = np.array(h_ab.real)  # Convert to numpy array
+        h_ba = np.array(h_ba.real)  # Convert to numpy array
+        h_be = np.array(h_be.real) 
+        # Determine the minimum and maximum values of the array
+        min_val_ba = h_ba.min()
+        max_val_ba = h_ba.max()
+
+        min_val_ab = h_ab.min()
+        max_val_ab = h_ab.max()
+
+        min_val_be = h_be.min()
+        max_val_be = h_be.max()
+
+        # Calculate the quantization intervals
+        quantization_intervals_ba = np.linspace(min_val_ba, max_val_ba, num_of_levels)
+        quantization_intervals_ab = np.linspace(min_val_ab, max_val_ab, num_of_levels)
+        quantization_intervals_be = np.linspace(min_val_be, max_val_be, num_of_levels)
 
 
+        indexes_ba = quantization_by_indexes_alice(h_ba,quantization_intervals_ba)
+        indexes_ab = quantization_by_indexes_bob(h_ab,quantization_intervals_ab)
+        indexes_be = quantization_by_indexes_bob(h_be,quantization_intervals_be)
 
+        print(indexes_ba,len(indexes_ba))
+        print(indexes_ab)
+        print(indexes_be)
+
+        SI_ab = compute_si_ab(indexes_ba,indexes_ab,SI_list_ab,set_ab_length)
+        SI_be = compute_si_be(indexes_be,indexes_ba,SI_list_be)
+
+
+    Pr_si_ab_1=SI_list_ab.count(1)/num_iterations
+   
+    
+    Pr_si_be_1=SI_list_be.count(1)/num_iterations
+    pr_si_1_be.append(Pr_si_be_1)
+
+    print("SI_ab",SI_ab)
+    print("SI_be",SI_be)
+    print("Pr(SI_ab=1)",Pr_si_ab_1)
+    print("Pr(SI_be=1)",Pr_si_be_1)
+    print("Pr(SI=1) when rho change",pr_si_1_ab)
+
+    count_when_is_greater_than_32 = len([num for num in set_ab_length if num >= 32])
+    Pr_setB_greater_than_32 = count_when_is_greater_than_32/num_iterations
+    pr_setB_greater_than_32.append(Pr_setB_greater_than_32)
+
+    print("Pr(|setB|>=32)",pr_setB_greater_than_32)
+    
+    SI_list_ab.clear()
+    SI_list_be.clear()
+    set_ab_length.clear()
+
+
+#Plots:
+plot_pr_si_1_when_rho_changes(rho_list,pr_si_1_ab)
+plot_pr_si_1_when_num_samples_changes(num_of_samples,pr_si_1_be)
+plot_pr_setB_is_greatereq_32(num_of_samples,pr_setB_greater_than_32)

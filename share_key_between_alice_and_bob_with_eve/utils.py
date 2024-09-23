@@ -13,7 +13,7 @@ def compute_si_ab(indexes_ba,indexes_ab,SI_list_ab,set_ab_length):
 
     
 #This method compute the similiraty index (SI) for bob and eve
-def compute_si_be(indexes_be,indexes_ba,SI_list_be):
+def compute_si_be(indexes_ba,indexes_be,SI_list_be):
 
     if(len(indexes_be)!=0):
         SI_be = len(set(indexes_ba).intersection(set(indexes_be)))/len(set(indexes_be))

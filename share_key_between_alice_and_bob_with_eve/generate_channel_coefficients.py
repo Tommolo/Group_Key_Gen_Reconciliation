@@ -37,7 +37,7 @@ def generate_channel_coefficients(num_of_samples,rho_ab_ba, rho_ab_ae, rho_ba_be
     h_ae = rho_ab_ae * h_ab + np.sqrt(1 - rho_ab_ae**2)  * eps_ae
     h_be = rho_ba_be * h_ba + np.sqrt(1 - rho_ba_be**2)  * eps_be
 
-
+    
     return {"h_ba": h_ba,
             "h_ab": h_ab,
             "h_ae": h_ae,

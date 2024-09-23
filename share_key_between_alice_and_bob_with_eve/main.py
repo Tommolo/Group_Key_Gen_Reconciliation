@@ -2,12 +2,12 @@ from generate_channel_coefficients import generate_channel_coefficients
 import numpy as np
 import matplotlib.pyplot as plt
 from quantization_by_index import *
-from other_methods import *
+from utils import *
 from plots import *
 
 
 # Number of iterations
-num_iterations = 100
+num_iterations = 1
 num_of_samples = [10,20,50,100,200,500,1000,2000,5000,8000]
 num_of_levels = 6
 count_subset = 0
@@ -21,133 +21,39 @@ pr_si_1_ab=[]
 pr_si_1_be=[]
 pr_setB_greater_than_32 = []
 
+# Generate channel coefficients
+channel_coefficients = generate_channel_coefficients(num_of_samples[2], rho_list[8], rho_list[0], rho_list[0])
+
+h_ab = channel_coefficients.get("h_ab")
+h_ba = channel_coefficients.get("h_ba")
+h_be = channel_coefficients.get("h_be")
+
+# Ensure h_ab and h_ba are numpy arrays or lists
+h_ab = np.array(h_ab.real)  # Convert to numpy array
+h_ba = np.array(h_ba.real)  # Convert to numpy array
+h_be = np.array(h_be.real) 
 
 
+indexes_A,alpha_A,min_index_A,max_index_A = get_indexes_according_to_alpha_Alice_value(h_ba)
+indexes_B,alpha_B,min_index_B,max_index_B= get_indexes_according_to_alpha_Bob_value(h_ab)
+indexes_E,alpha_E,min_index_E,max_index_E = get_indexes_according_to_alpha_Bob_value(h_be)
 
-for rho in rho_list:
-    for _ in range(num_iterations):
-        # Generate channel coefficients
-        channel_coefficients = generate_channel_coefficients(num_of_samples[3], rho, rho_list[0], rho_list[0])
+print(f"indexes_Alice: {indexes_A}")
+print(f"indexes_Bob: {indexes_B}")
+print(f"indexes_Eve: {indexes_E}")
 
-        h_ab = channel_coefficients.get("h_ab")
-        h_ba = channel_coefficients.get("h_ba")
-        h_be = channel_coefficients.get("h_be")
+print(f"Alpha_A: {alpha_A}")
+print(f"Alpha_B: {alpha_B}")
+print(f"Alpha_E: {alpha_E}")
 
-        # Ensure h_ab and h_ba are numpy arrays or lists
-        h_ab = np.array(h_ab.real)  # Convert to numpy array
-        h_ba = np.array(h_ba.real)  # Convert to numpy array
-        h_be = np.array(h_be.real) 
-        # Determine the minimum and maximum values of the array
-        min_val_ba = h_ba.min()
-        max_val_ba = h_ba.max()
+si_ab = compute_si_ab(indexes_A,indexes_B,SI_list_ab,set_ab_length)
+print("SI_AB",si_ab)
 
-        min_val_ab = h_ab.min()
-        max_val_ab = h_ab.max()
+si_be = compute_si_be(indexes_A,indexes_E,SI_list_be)
+print ("SI_BE",si_be)
 
-        min_val_be = h_be.min()
-        max_val_be = h_be.max()
-
-        # Calculate the quantization intervals
-        quantization_intervals_ba = np.linspace(min_val_ba, max_val_ba, num_of_levels)
-        quantization_intervals_ab = np.linspace(min_val_ab, max_val_ab, num_of_levels)
-        quantization_intervals_be = np.linspace(min_val_be, max_val_be, num_of_levels)
+#Plot channel coefficients 
+quantization_plot(h_ba,h_ab,h_be,min_index_A,max_index_A,min_index_B,max_index_B,min_index_E,max_index_E)
+all_levels_of_quantization (h_ba)
 
 
-        indexes_ba = quantization_by_indexes_alice(h_ba,quantization_intervals_ba)
-        indexes_ab = quantization_by_indexes_bob(h_ab,quantization_intervals_ab)
-        indexes_be = quantization_by_indexes_bob(h_be,quantization_intervals_be)
-
-        print(indexes_ba,len(indexes_ba))
-        print(indexes_ab)
-        print(indexes_be)
-
-        SI_ab = compute_si_ab(indexes_ba,indexes_ab,SI_list_ab,set_ab_length)
-        SI_be = compute_si_be(indexes_be,indexes_ba,SI_list_be)
-
-
-    Pr_si_ab_1=SI_list_ab.count(1)/num_iterations
-    pr_si_1_ab.append(Pr_si_ab_1)
-    
-    Pr_si_be_1=SI_list_be.count(1)/num_iterations
-
-    print("SI_ab",SI_ab)
-    print("SI_be",SI_be)
-    print("Pr(SI_ab=1)",Pr_si_ab_1)
-    print("Pr(SI_be=1)",Pr_si_be_1)
-    print("Pr(SI=1) when rho change",pr_si_1_ab)
-
-    count_when_is_greater_than_32 = len([num for num in set_ab_length if num >= 32])
-
-    print("Pr(|setB|>=32)",count_when_is_greater_than_32/num_iterations)
-    SI_list_ab.clear()
-    SI_list_be.clear()
-    set_ab_length.clear()
-
-for samples in num_of_samples:
-    for _ in range(num_iterations):
-        # Generate channel coefficients
-        channel_coefficients = generate_channel_coefficients(samples, 0.9, 0.1, 0.1)
-
-        h_ab = channel_coefficients.get("h_ab")
-        h_ba = channel_coefficients.get("h_ba")
-        h_be = channel_coefficients.get("h_be")
-
-        # Ensure h_ab and h_ba are numpy arrays or lists
-        h_ab = np.array(h_ab.real)  # Convert to numpy array
-        h_ba = np.array(h_ba.real)  # Convert to numpy array
-        h_be = np.array(h_be.real) 
-        # Determine the minimum and maximum values of the array
-        min_val_ba = h_ba.min()
-        max_val_ba = h_ba.max()
-
-        min_val_ab = h_ab.min()
-        max_val_ab = h_ab.max()
-
-        min_val_be = h_be.min()
-        max_val_be = h_be.max()
-
-        # Calculate the quantization intervals
-        quantization_intervals_ba = np.linspace(min_val_ba, max_val_ba, num_of_levels)
-        quantization_intervals_ab = np.linspace(min_val_ab, max_val_ab, num_of_levels)
-        quantization_intervals_be = np.linspace(min_val_be, max_val_be, num_of_levels)
-
-
-        indexes_ba = quantization_by_indexes_alice(h_ba,quantization_intervals_ba)
-        indexes_ab = quantization_by_indexes_bob(h_ab,quantization_intervals_ab)
-        indexes_be = quantization_by_indexes_bob(h_be,quantization_intervals_be)
-
-        print(indexes_ba,len(indexes_ba))
-        print(indexes_ab)
-        print(indexes_be)
-
-        SI_ab = compute_si_ab(indexes_ba,indexes_ab,SI_list_ab,set_ab_length)
-        SI_be = compute_si_be(indexes_be,indexes_ba,SI_list_be)
-
-
-    Pr_si_ab_1=SI_list_ab.count(1)/num_iterations
-   
-    
-    Pr_si_be_1=SI_list_be.count(1)/num_iterations
-    pr_si_1_be.append(Pr_si_be_1)
-
-    print("SI_ab",SI_ab)
-    print("SI_be",SI_be)
-    print("Pr(SI_ab=1)",Pr_si_ab_1)
-    print("Pr(SI_be=1)",Pr_si_be_1)
-    print("Pr(SI=1) when rho change",pr_si_1_ab)
-
-    count_when_is_greater_than_32 = len([num for num in set_ab_length if num >= 32])
-    Pr_setB_greater_than_32 = count_when_is_greater_than_32/num_iterations
-    pr_setB_greater_than_32.append(Pr_setB_greater_than_32)
-
-    print("Pr(|setB|>=32)",pr_setB_greater_than_32)
-    
-    SI_list_ab.clear()
-    SI_list_be.clear()
-    set_ab_length.clear()
-
-
-#Plots:
-plot_pr_si_1_when_rho_changes(rho_list,pr_si_1_ab)
-plot_pr_si_1_when_num_samples_changes(num_of_samples,pr_si_1_be)
-plot_pr_setB_is_greatereq_32(num_of_samples,pr_setB_greater_than_32)

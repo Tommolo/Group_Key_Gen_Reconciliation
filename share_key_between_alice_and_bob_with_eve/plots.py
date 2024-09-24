@@ -32,15 +32,12 @@ def quantization_plot(h_ba,h_ab,h_be,min_index_A,max_index_A,min_index_B,max_ind
     plt.show()
 
 def all_levels_of_quantization (h_ba):
-    
 
     plt.figure(figsize=(10, 6))
     plt.plot(h_ba.real, marker='o', linestyle='-', color='blue', label='H_ba')
 
-
     for value in h_ba:
         plt.axhline(value, color='red', linestyle='--')    
-    
 
     plt.legend()
     plt.title('All levels')
@@ -49,39 +46,15 @@ def all_levels_of_quantization (h_ba):
     plt.grid(True)
     plt.show()
 
+def plot_si_when_increase_alpha (alphas,si):
 
-
-def plot_pr_si_1_when_rho_changes(rho_list,pr_si_1):
-    
     plt.figure(figsize=(10, 6))
-    plt.plot(rho_list,pr_si_1)
+    plt.plot(alphas,si,marker ='^',color='blue')
 
     #plt.legend()
-    plt.xlabel('Correlation coefficient')
-    plt.ylabel('Pr(SI=1)')
+    plt.xlabel('alpha(a_A = 0.65)')
+    plt.ylabel('Similarity of indexes (SI)')
     plt.grid(True)
     plt.show()
 
-
-def plot_pr_si_1_when_num_samples_changes(num_of_samples,pr_si_1):
-    
-    plt.figure(figsize=(10, 6))
-    plt.plot(num_of_samples,pr_si_1,color='red')
-
-    #plt.legend()
-    plt.xlabel('Number of samples')
-    plt.ylabel('Pr(SI=1)')
-    plt.grid(True)
-    plt.show()
-
-
-def plot_pr_setB_is_greatereq_32(num_of_samples,pr_setB_greater_than_32):
-    
-    plt.figure(figsize=(10, 6))
-    plt.plot(num_of_samples,pr_setB_greater_than_32)
-
-    #plt.legend()
-    plt.xlabel('Number of samples')
-    plt.ylabel('Pr(setB>=32)')
-    plt.grid(True)
-    plt.show()
+ 

@@ -24,8 +24,8 @@ def generate_channel_coefficients(num_of_samples):
     eps_ae = eps_ae_magnitude * np.exp(1j * eps_ae_phase)
 
     # Generate an array of rho_ab_ba and rho_ab_ae in the range [0.7, 0.9] for each sample
-    rho_ab = np.random.uniform(0.8, 1, size=num_of_samples)
-    rho_ae = np.random.uniform(0.1, 0.2, size=num_of_samples)
+    rho_ab = np.random.uniform(0.75, 1, size=num_of_samples)
+    rho_ae = np.random.uniform(0, 0.25, size=num_of_samples)
 
     # Compute the correlated coefficients from Bob's point of view
     h_ab = rho_ab * h_ba + np.sqrt(1 - rho_ab**2) * eps_ab

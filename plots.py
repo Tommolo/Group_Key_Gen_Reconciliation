@@ -136,3 +136,51 @@ def get_heatmap_alphas_SI(dict_alphas_SI,who):
         plt.title("Heatmap alphas Alice-Eve")
         plt.show()
 
+
+
+def adjusting_alpha_value(channel_coefficients,min_index,max_index):
+
+    channel_coefficients_ordered = sorted(set(channel_coefficients))
+    plt.figure(figsize=(10, 6))
+    plt.plot(channel_coefficients, marker='o', linestyle='-', color='blue')
+
+    plt.axhline(channel_coefficients_ordered[min_index], color='red', linestyle='--')
+    plt.axhline(channel_coefficients_ordered[max_index], color='red', linestyle='--')
+    
+    plt.legend()
+    plt.title('Channel coefficients samples')
+    plt.xlabel('Samples')
+    plt.ylabel('Channel coefficients')
+    plt.grid(True)
+    plt.show()
+
+
+def get_heatmap_alphas_bestN(dict_alphas_SI,min,max):
+   
+   # Step 1: Extract unique x and y values
+    x_vals = sorted(set(k[0] for k in dict_alphas_SI.keys()))
+    y_vals = sorted(set(k[1] for k in dict_alphas_SI.keys()))
+
+    # Step 2: Create a 2D grid (matrix) with NaN values
+    data_matrix = np.empty((len(y_vals), len(x_vals)))
+    data_matrix[:] = np.nan  # Initialize with NaN to mark missing values
+
+    # Step 3: Populate the grid using the dictionary values
+    for (x, y), value in dict_alphas_SI.items():
+        x_idx = x_vals.index(x)
+        y_idx = y_vals.index(y)
+        data_matrix[y_idx, x_idx] = value
+
+    # Step 4: Plot the heatmap
+    plt.figure(figsize=(8, 6))
+    heatmap=sns.heatmap(data_matrix,vmin=min,vmax=max, annot=True, cmap='viridis',fmt='g', xticklabels=x_vals, yticklabels=y_vals)
+
+    # Set the color bar label
+    colorbar = heatmap.collections[0].colorbar
+    colorbar.set_label('number of samples')
+    plt.xlabel("alpha_alice")
+    plt.ylabel("alpha_Bob")
+    plt.title("Heatmap alphas bestN samples Alice-Bob")
+    plt.show()
+
+

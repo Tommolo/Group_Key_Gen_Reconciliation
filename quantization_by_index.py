@@ -30,8 +30,8 @@ def get_dict_alpha_indexes (channel_coefficients):
 
     while min_index>=0 and max_index<len(channel_coefficients_ordered):
         indexes = quantization_by_indexes(channel_coefficients, min_index, max_index)
-        alpha = (len(channel_coefficients) - len(indexes))/len(channel_coefficients)
-        alpha=np.round(1-alpha,1)
+        alpha = (len(channel_coefficients)-(len(indexes)))/len(channel_coefficients)
+        alpha=np.round(alpha,1)
    
         #<alpha,indexes>
         if(alpha!=0.0 and alpha!=1.0):
@@ -40,8 +40,12 @@ def get_dict_alpha_indexes (channel_coefficients):
         min_index -= 1
         max_index += 1
 
+        #if(alpha==0.4):
+         #   save_index_min = min_index
+          #  save_index_max = max_index
 
-    return dict_alpha_indexes
+
+    return dict_alpha_indexes #, save_index_min,save_index_max
 
 
 

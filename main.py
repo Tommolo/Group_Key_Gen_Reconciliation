@@ -17,7 +17,6 @@ h_ab = channel_coefficients.get("h_ab")
 h_ba = channel_coefficients.get("h_ba")
 h_ae = channel_coefficients.get("h_ae")
 
-half_length = len(h_ba) // 2
 
 # Ensure h_ab and h_ba are numpy arrays or lists
 real_part_ab = h_ab.real

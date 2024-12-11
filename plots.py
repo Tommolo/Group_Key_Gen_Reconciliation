@@ -84,6 +84,7 @@ def get_heatmap_alphas_SI(dict_alphas_SI,who):
     x_vals = sorted(set(k[0] for k in dict_alphas_SI.keys()))
     y_vals = sorted(set(k[1] for k in dict_alphas_SI.keys()))
 
+
     # Step 2: Create a 2D grid (matrix) with NaN values
     data_matrix = np.empty((len(y_vals), len(x_vals)))
     data_matrix[:] = np.nan  # Initialize with NaN to mark missing values
@@ -94,11 +95,21 @@ def get_heatmap_alphas_SI(dict_alphas_SI,who):
         y_idx = y_vals.index(y)
         data_matrix[y_idx, x_idx] = value
 
-    # Step 4: Plot the heatmap
-    plt.figure(figsize=(8, 6))
-    heatmap=sns.heatmap(data_matrix,vmin=0,vmax=1, annot=True, cmap='viridis', xticklabels=x_vals, yticklabels=y_vals)
+    # Step 4: Reverse y-axis labels for desired ordering
+    y_vals_reversed = y_vals[::-1]  # Reverse the order of y values
 
-   
+    # Step 5: Plot the heatmap
+    plt.figure(figsize=(8, 6))
+    heatmap = sns.heatmap(
+        data_matrix[::-1],  # Flip the matrix vertically
+        vmin=0,
+        vmax=1,
+        annot=True,
+        cmap='viridis',
+        xticklabels=x_vals,
+        yticklabels=y_vals_reversed
+    )
+
 
     # Set labels and title
     if(who=="ab"):
